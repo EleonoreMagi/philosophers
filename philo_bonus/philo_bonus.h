@@ -6,7 +6,7 @@
 /*   By: dmillan <dmillan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 22:20:02 by dmillan           #+#    #+#             */
-/*   Updated: 2022/06/30 01:40:38 by dmillan          ###   ########.fr       */
+/*   Updated: 2022/06/30 17:06:33 by dmillan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,40 +24,31 @@
 # define SUCCESS 0
 # define FAIL -1
 
-typedef struct s_info
+typedef struct s_philo
 {
 	int				phil_num;
+	int				forks_num;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				meals_required;
-	int				finish;
-	long long int	start_time;
-	int				philos_eat;
-	sem_t			*forks;
-	sem_t			*print;
-}	t_info;
-
-typedef struct s_philo
-{
-	pid_t			fk_id;
-	long long int	last_meal;
-	int				idx;
+	int				meals_req;
 	int				meal_count;
+	int				finish;
 	int				dead;
+	int				*pid;
+	sem_t			*block_print;
+	sem_t			*block_fork;
+	long long int	start_time;
+	int				idx;
+	long long int	last_meal;
 	pthread_t		check_process;
-	t_info			*info;
 }	t_philo;
 
-int			initiate_philos(t_philo **philo, t_info *info);
-int			ft_error_msg(char *str, t_philo *ptr);
+t_philo		*init_exchange(int argc, char **argv);
+int			ft_error_msg(char *str);
 long long	get_timestamp(void);
 void		upgrade_sleep(long long time, t_philo *philo);
 int			ft_atoi(const char *str);
 void		print_status(t_philo *philo, char *str);
-void		stop_all(t_philo *philo, int a);
-int			create_threads(t_philo *philo);
-int			ft_atoi(const char *str);
-void		philo_process_loop(t_philo *philo);
 
 #endif

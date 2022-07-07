@@ -6,7 +6,7 @@
 /*   By: dmillan <dmillan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 20:48:48 by dmillan           #+#    #+#             */
-/*   Updated: 2022/06/30 01:46:22 by dmillan          ###   ########.fr       */
+/*   Updated: 2022/06/30 17:07:31 by dmillan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,22 @@
 
 void	print_status(t_philo *philo, char *str)
 {
-	sem_wait(philo->info->print);
-	if (!philo->info->finish)
-		printf("%lld %d %s\n",
-			get_timestamp() - philo->info->start_time, philo->idx + 1, str);
-	sem_post(philo->info->print);
+	sem_wait(philo->block_print);
+	if (!philo->finish)
+		printf("%lld %d %s\n", get_timestamp()
+			- philo->start_time, philo->idx, str);
+	sem_post(philo->block_print);
 }
 
-int	ft_error_msg(char *str, t_philo *ptr)
+int	ft_error_msg(char *str)
 {
-	printf("%s\n", str);
-	if (!ptr)
-		free(ptr);
+	int	i;
+
+	i = 0;
+	while (*(str + i))
+		i++;
+	write(2, str, i);
+	write(2, "\n", 1);
 	exit(0);
 }
 
@@ -37,17 +41,16 @@ long long	get_timestamp(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	upgrade_sleep(long long ms, t_philo *philo)
+void	upgrade_sleep(long long time, t_philo *philo)
 {
-	long long int	start;
-	long long int	end;
+	long long	t;
 
-	start = get_timestamp();
-	end = get_timestamp();
-	while (philo->info->finish && end - start < ms)
+	t = get_timestamp();
+	while (!philo->finish)
 	{
+		if (get_timestamp() - t >= time)
+			break ;
 		usleep(500);
-		end = get_timestamp();
 	}
 }
 

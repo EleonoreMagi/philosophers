@@ -1,4 +1,4 @@
-NAME = philo
+NAME = philo_bonus
 
 SRCS 	= 	process_init_bonus.c \
 			philo_bonus.c \
